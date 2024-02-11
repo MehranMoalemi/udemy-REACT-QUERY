@@ -1,7 +1,7 @@
 import {
   keepPreviousData,
   useQuery,
-  useQueryClient,
+  useQueryClient
 } from "@tanstack/react-query";
 import { useState,useEffect } from "react";
 
@@ -12,6 +12,7 @@ const maxPostPage = 10;
 export function Posts() {
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedPost, setSelectedPost] = useState(null);
+  
   const queryClient = useQueryClient();
   useEffect(() => {
     if (currentPage < maxPostPage) {
