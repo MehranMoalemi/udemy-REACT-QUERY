@@ -1,3 +1,4 @@
+import { useInfiniteQuery } from "@tanstack/react-query";
 import InfiniteScroll from "react-infinite-scroller";
 import { Species } from "./Species";
 
@@ -8,6 +9,36 @@ const fetchUrl = async (url) => {
 };
 
 export function InfiniteSpecies() {
-  // TODO: get data for InfiniteScroll via React Query
-  return <InfiniteScroll />;
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isError,
+    isLoading,
+    isFetching,
+    error,
+  } = useInfiniteQuery({
+    queryKey: ["sw-species"],
+    queryFn: ({ pageParam = initialUrl }) => fetchUrl(pageParam),
+    getNextPageParam: (lastPage) => lastPage.next || undefined,
+  });
+  if (isLoading) return <div>is loading...</div>;
+  if (isError) return <div>{error.toString()}</div>;
+  return (
+    <>
+      {isFetching && <div>is loading...</div>}
+      <InfiniteScroll loadMore={fetchNextPage} hasMore={hasNextPage}>
+        {data.pages.map((pageData) =>
+          pageData.results.map((species) => (
+            <Species
+              key={species.name}
+              name={species.name}
+              language={species.language}
+              averageLifespan={species.average_lifespan}
+            />
+          ))
+        )}
+      </InfiniteScroll>
+    </>
+  );
 }
